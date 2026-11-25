@@ -389,17 +389,6 @@ this angle; LED positions and prop placements don't change.
   blue), then *Straighten* spaces every LED between them evenly along the line. Moved LEDs count as good, so a partial rescan leaves them
   alone, and the server sends the new positions to the controllers a couple of seconds after each change.
 
-## Releasing
-
-1. Bump `FW_VERSION` in `firmware/src/settings.h` and `version` in `ha-addon/config.yaml` (keep them the same).
-2. Commit, then tag and push: `git tag v1.15.0 && git push origin main v1.15.0`.
-3. GitHub Actions then builds the firmware for every board into a release (`firmware.yml`; it stops if
-   the tag and `FW_VERSION` differ) and the Docker image for amd64 and arm64 as
-   `ghcr.io/spinbot/espectacle:1.15.0`, `:1.15` (`docker.yml`). Every push to `main` that touches the
-   server or firmware also updates `:latest`. The Home Assistant add-on pulls the image matching its `version`.
-
-The first time the image is published, make it public: GitHub → your profile → Packages → espectacle →
-Package settings → Change visibility → Public.
 
 ## Notes
 
