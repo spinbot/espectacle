@@ -8,7 +8,7 @@
 // (The older TREELIGHTS_DATA / TREELIGHTS_PASSWORD names still work.)
 import express from 'express';
 import path from 'path';
-import { existsSync, promises as fs } from 'fs';
+import { existsSync, readFileSync, promises as fs } from 'fs';
 import { fileURLToPath } from 'url';
 import { Storage } from './storage.js';
 import { env } from './env.js';
@@ -27,12 +27,16 @@ import { request } from './controllers.js';
 import type { AppData, LightState } from '../shared/project.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const port = Number(process.env.PORT ?? 8080);
 const dataDir = path.resolve(env('DATA') ?? 'data');
+// Running as a Home Assistant add-on: its settings (password, port) arrive in <data>/options.json.
+const addonOptions = ((): { password?: string; port?: number } => {
+  try { return JSON.parse(readFileSync(path.join(dataDir, 'options.json'), 'utf8')); } catch { return {}; }
+})();
+const port = Number(addonOptions.port || process.env.PORT || 8080);
 const webDir = path.resolve(here, '../web/public');
 
 const storage = new Storage(dataDir);
-const auth = new Auth(env('PASSWORD') || undefined, dataDir);
+const auth = new Auth(env('PASSWORD') || addonOptions.password || undefined, dataDir);
 const controllers = new Controllers(() => storage.get().data);
 const media = new Media(path.join(dataDir, 'media'));
 const settings = new Settings(dataDir);

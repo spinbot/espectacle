@@ -25,6 +25,23 @@ Then open `http://<host-ip>:8080` in a browser. Everything is stored in `server/
 this folder up). The container needs to reach the controllers' IP addresses on your LAN; the
 default Docker network does that.
 
+**Or use the published image** (amd64 and arm64, so a Raspberry Pi works; firmware builds included),
+no checkout needed – a folder with this `docker-compose.yml` and a `.env`:
+
+```yaml
+services:
+  espectacle:
+    image: ghcr.io/spinbot/espectacle:latest
+    container_name: espectacle
+    restart: unless-stopped
+    ports: ["8080:8080"]
+    env_file: .env
+    volumes: ["./data:/data"]
+```
+
+`docker compose pull && docker compose up -d` updates it. Pin a version (`:1.14.0`) if you'd rather
+update on purpose. Home Assistant users can install it as an add-on instead (see the main README).
+
 Without Docker: Node 20+, then `npm ci && npm run build && ESPECTACLE_PASSWORD=… npm start`.
 
 | Variable | Default | |

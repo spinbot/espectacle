@@ -1,0 +1,30 @@
+name: ESPectacle
+version: "1.14.0"
+slug: espectacle
+description: 3D-mapped LED displays for ESP32 – looks, shows, schedules, firmware builds and a 3D web editor
+url: https://github.com/spinbot/espectacle
+# The published multi-arch image; Home Assistant pulls ghcr.io/spinbot/espectacle:<version>.
+image: ghcr.io/spinbot/espectacle
+arch:
+  - amd64
+  - aarch64
+init: false
+startup: application
+boot: auto
+# The server talks to controllers on your LAN (HTTP and DDP over UDP), and they say hello back to it.
+host_network: true
+ports:
+  8080/tcp: 8080
+ports_description:
+  8080/tcp: Website (set the same number under Port in the options)
+webui: "http://[HOST]:[PORT:8080]"
+# The ESP32 toolchain (about 1 GB, downloaded again when needed) stays out of Home Assistant backups.
+backup_exclude:
+  - "platformio/**"
+  - "build/**"
+options:
+  password: ""
+  port: 8080
+schema:
+  password: password?
+  port: port

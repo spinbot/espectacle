@@ -1,0 +1,5 @@
+# Home Assistant add-on repository: Settings → Add-ons → Add-on Store → ⋮ → Repositories, then add
+# https://github.com/spinbot/espectacle
+name: ESPectacle
+url: https://github.com/spinbot/espectacle
+maintainer: spinbot

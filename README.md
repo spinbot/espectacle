@@ -59,6 +59,13 @@ pio run -e esp32-s2-saola-1 -t upload     # Saola / generic S2 dev boards
 On an S2 Mini, hold button `0` and tap `RST` to enter the bootloader before uploading, then tap
 `RST` afterwards.
 
+**Ready-made firmware:** every [release](https://github.com/spinbot/espectacle/releases) has, for each
+board, `espectacle-<version>-<board>-factory.bin` (a complete image: flash it over USB at `0x0` with
+`esptool.py write_flash 0x0 …` or a browser flasher such as Adafruit's WebSerial ESPTool) and
+`espectacle-<version>-<board>.bin` (for updating a controller over WiFi from the website's Devices tab).
+These have no WiFi built in: the controller starts its setup hotspot. To have WiFi and the server
+address baked in, build on the server instead (below).
+
 ESP32-S3 boards (DevKitC-1 style, recommended – dual core, more memory):
 
 ```
@@ -329,7 +336,15 @@ the text is short enough.
 
 ## Home Assistant
 
-Website → Settings. **MQTT discovery**: give the broker (e.g. the Mosquitto add-on) and ESPectacle shows
+**As an add-on:** Settings → Add-ons → Add-on Store → ⋮ → Repositories, add
+`https://github.com/spinbot/espectacle`, then install **ESPectacle**, set a password in its
+Configuration tab and start it. The website opens with *Open Web UI* (port 8080). It runs the same server
+as the Docker image, on the host network so it can reach the controllers, with its data in Home
+Assistant's backups (apart from the ESP32 build toolchain, which is downloaded again when needed).
+Installing firmware over USB from the browser needs HTTPS or localhost, so from Home Assistant use
+*Download* and flash it, or use a release image.
+
+**MQTT and REST** – website → Settings. **MQTT discovery**: give the broker (e.g. the Mosquitto add-on) and ESPectacle shows
 up as a device with a light (on/off, brightness, effect list, colour), a Show select (plays a show once,
 lights only), a Schedules switch, a Message text, a Stop-show button and a Now-playing sensor. Topics live
 under `espectacle/…`; availability on `espectacle/status`; entity IDs start `espectacle_` (e.g.
@@ -381,6 +396,18 @@ this angle; LED positions and prop placements don't change.
   select the other end (cyan and yellow rings; on the real prop the ends light white and the run dim
   blue), then *Straighten* spaces every LED between them evenly along the line. Moved LEDs count as good, so a partial rescan leaves them
   alone, and the server sends the new positions to the controllers a couple of seconds after each change.
+
+## Releasing
+
+1. Bump `FW_VERSION` in `firmware/src/settings.h` and `version` in `ha-addon/config.yaml` (keep them the same).
+2. Commit, then tag and push: `git tag v1.15.0 && git push origin main v1.15.0`.
+3. GitHub Actions then builds the firmware for every board into a release (`firmware.yml`; it stops if
+   the tag and `FW_VERSION` differ) and the Docker image for amd64 and arm64 as
+   `ghcr.io/spinbot/espectacle:1.15.0`, `:1.15` (`docker.yml`). Every push to `main` that touches the
+   server or firmware also updates `:latest`. The Home Assistant add-on pulls the image matching its `version`.
+
+The first time the image is published, make it public: GitHub → your profile → Packages → espectacle →
+Package settings → Change visibility → Public.
 
 ## Notes
 

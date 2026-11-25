@@ -1,0 +1,73 @@
+# On a version tag (v1.14.0), builds the firmware for every board and attaches it to a GitHub release:
+#   espectacle-<version>-<board>.bin          for updates over WiFi (upload on the server's Devices tab)
+#   espectacle-<version>-<board>-factory.bin  a complete image to flash over USB at 0x0 (esptool, or
+#                                             the ESP Web Tools / Adafruit WebSerial ESPTool pages)
+name: Firmware release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { board: lolin_s2_mini,    chip: esp32s2, boot: '0x1000' }
+          - { board: esp32-s2-saola-1, chip: esp32s2, boot: '0x1000' }
+          - { board: esp32-s3-n8r2,    chip: esp32s3, boot: '0x0' }
+          - { board: esp32-s3-n16r8,   chip: esp32s3, boot: '0x0' }
+          - { board: esp32dev,         chip: esp32,   boot: '0x1000' }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the tag matches FW_VERSION
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          v=$(sed -n 's/^#define FW_VERSION *"\(.*\)"/\1/p' firmware/src/settings.h)
+          [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "::error::Tag ${GITHUB_REF_NAME} but firmware/src/settings.h says $v"; exit 1; }
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ matrix.board }}-${{ hashFiles('firmware/platformio.ini') }}
+      - run: pip install platformio "esptool==4.8.1"
+      - name: Build
+        working-directory: firmware
+        env:
+          ESPECTACLE_FIRMWARE_DIR: ${{ github.workspace }}/out
+        run: pio run -e ${{ matrix.board }}
+      - name: Make the full USB image
+        run: |
+          b=firmware/.pio/build/${{ matrix.board }}
+          app=$(ls out/espectacle-*-${{ matrix.board }}.bin)
+          esptool.py --chip ${{ matrix.chip }} merge_bin -o "${app%.bin}-factory.bin" \
+            ${{ matrix.boot }} $b/bootloader.bin 0x8000 $b/partitions.bin \
+            0xe000 ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin \
+            0x10000 $b/firmware.bin
+          ls -l out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ matrix.board }}
+          path: out/*.bin
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: out/*.bin
+          generate_release_notes: true

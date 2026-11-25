@@ -1,0 +1,12 @@
+.git
+**/.DS_Store
+**/node_modules
+**/.env
+server/data
+server/dist
+server/web/public/app.js
+server/web/public/app.js.map
+firmware/.pio
+firmware/.vscode
+ios
+docs
