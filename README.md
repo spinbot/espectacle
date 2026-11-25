@@ -1,17 +1,9 @@
 # ESPectacle
 
-**Website:** `docs/` is the project's landing page, ready for GitHub Pages (Settings → Pages → Deploy
-from a branch → `main`, folder `/docs`). Edit `docs/site.html` and run `python3 docs/build.py` to
-regenerate `docs/index.html`. Licensed under the MIT licence (see `LICENSE`).
 
 3D-mapped addressable LEDs for a Christmas tree or a whole yard of props: ESP32-S2 controllers
 drive the LEDs, and an iOS app manages the controllers, works out where every LED is in space
 with the camera and LiDAR, and runs position-aware animations.
-
-*Formerly TreeLights.* For older setups: the server still accepts the `TREELIGHTS_…` environment
-variables, controllers also advertise `_treelights._tcp` (for app versions from before the rename), the
-app moves its saved `treelights.json` over by itself, and the server reads firmware files tagged with
-either name. Home Assistant entities moved from `treelights_…` to `espectacle_…` (see Home Assistant).
 
 ```
 server/     Optional home server + website: shared project, 3D yard view, effect preview (Docker)
