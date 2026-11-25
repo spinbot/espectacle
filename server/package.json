@@ -1,0 +1,30 @@
+{
+  "name": "espectacle-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ESPectacle server: stores the project, hosts the web editor and talks to the controllers",
+  "type": "module",
+  "scripts": {
+    "build:web": "esbuild web/src/main.ts --bundle --format=esm --target=es2022 --minify --sourcemap --outfile=web/public/app.js",
+    "build:server": "esbuild src/server.ts --bundle --platform=node --format=esm --target=node20 --packages=external --sourcemap --outfile=dist/server.js",
+    "build": "npm run build:web && npm run build:server",
+    "build:wasm": "sh wasm/build.sh",
+    "typecheck": "tsc --noEmit",
+    "start": "node --enable-source-maps dist/server.js",
+    "dev": "npm run build && npm start"
+  },
+  "dependencies": {
+    "esp-web-tools": "^10.5.2",
+    "express": "5.1.0",
+    "mqtt": "^5.16.1",
+    "tar": "^7.5.23"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.3",
+    "@types/node": "22.15.30",
+    "@types/three": "0.177.0",
+    "esbuild": "0.25.5",
+    "three": "0.177.0",
+    "typescript": "5.8.3"
+  }
+}

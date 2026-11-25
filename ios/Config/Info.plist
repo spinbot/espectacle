@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used to find where each LED is on your props.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>ESPectacle talks to your LED controllers over your WiFi network.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_espectacle._tcp</string>
+		<string>_treelights._tcp</string>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+</dict>
+</plist>

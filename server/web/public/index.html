@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ESPectacle</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="mobile-web-app-capable" content="yes">
+</head>
+<body>
+  <div id="login" class="overlay" hidden>
+    <form id="login-form" class="card">
+      <h1>ESPectacle</h1>
+      <label>Password <input id="password" type="password" autocomplete="current-password" required></label>
+      <button type="submit">Sign in</button>
+      <p id="login-error" class="error"></p>
+    </form>
+  </div>
+
+  <div id="app">
+    <aside id="side">
+      <header>
+        <h1>ESPectacle</h1>
+        <div id="controllers" class="dots"></div>
+      </header>
+      <nav class="tabs" role="tablist">
+        <button data-tab="look" class="active" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span>Look</span></button>
+        <button data-tab="plants" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l6 9h-3l4 6H5l4-6H6z"/><path d="M12 17v5"/></svg><span>Props</span></button>
+        <button data-tab="shows" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M8 14h5M8 10v9"/></svg><span>Shows</span></button>
+        <button data-tab="schedule" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Schedule</span></button>
+        <button data-tab="devices" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg><span>Devices</span></button>
+        <button data-tab="settings" role="tab"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></button>
+      </nav>
+      <h2 id="tab-title" class="tab-title">Look</h2>
+
+      <section id="tab-look" class="tab">
+        <p class="hint">Choose the everyday look for the whole display: an effect, its colours, brightness and speed.
+          It plays in the 3D view; tick <b>Also show on the real lights</b> to send each change to the controllers as
+          you go. They keep it until a show or schedule takes over.</p>
+        <div class="live">
+          <label class="toggle"><input id="live" type="checkbox"> Also show on the real lights</label>
+          <button id="load-look" class="secondary">Use the lights' current look</button>
+          <p id="live-status" class="hint"></p>
+        </div>
+        <div id="effects" class="effect-grid"></div>
+        <div id="palette-row">
+          <h2>Palette</h2>
+          <div id="palettes" class="palettes"></div>
+        </div>
+        <div class="row colors">
+          <label id="c1-row">Colour 1 <input id="c1" type="color"></label>
+          <label id="c2-row">Colour 2 <input id="c2" type="color"></label>
+        </div>
+        <label class="slider">Brightness <input id="bri" type="range" min="0" max="255"></label>
+        <label class="slider">Speed <input id="spd" type="range" min="0" max="255"></label>
+        <label class="slider"><span id="scl-label">Scale</span> <input id="scl" type="range" min="0" max="255"></label>
+        <label id="text-row" class="field" hidden>Text <input id="look-text" maxlength="200" placeholder="Merry Christmas"></label>
+        <div id="target-row" class="field" hidden>Count down to
+          <div class="row"><input id="look-target" type="datetime-local"><button id="look-xmas" class="secondary">Christmas</button></div>
+          <span class="sub">Empty: midnight at the start of Christmas Day. The text above shows when it gets there.</span></div>
+        <div id="media-row" hidden></div>
+        <p id="online-note" class="hint" hidden>Online effect: drawn by the server and streamed to the lights, so it only runs while the server is on.</p>
+        <div id="dir-row"></div>
+      </section>
+
+      <section id="tab-plants" class="tab" hidden>
+        <p class="hint">Positions in metres in the yard scan: X right, Y up, Z towards where you stood when the yard scan started (set which way the street really is under Yard). Add drawn shapes (grids, mega trees, arches...), clone a prop you have several of, and share a string between props with LED ranges. Changes are saved for everyone; the app sends them to the controllers.</p>
+        <div id="plants"></div>
+      </section>
+
+      <section id="tab-shows" class="tab" hidden></section>
+
+      <section id="tab-schedule" class="tab" hidden></section>
+
+      <section id="tab-devices" class="tab" hidden></section>
+
+      <section id="tab-settings" class="tab" hidden></section>
+
+      <footer>
+        <span id="sync"></span>
+      </footer>
+    </aside>
+    <main id="main">
+      <div id="view">
+        <div id="empty" class="empty" hidden>
+          <h2>Nothing to show yet</h2>
+          <p>Scan your props in the ESPectacle app and turn on server sync (Controllers tab → Server). They'll appear here.</p>
+        </div>
+      </div>
+      <div id="view-controls">
+        <label>Yard scan <input id="vc-scan" type="range" min="0" max="0.6" step="0.01"></label>
+        <label>LED glow <input id="vc-glow" type="range" min="1" max="5" step="0.1"></label>
+        <label>Unlit LEDs <input id="vc-unlit" type="range" min="0" max="0.08" step="0.002"></label>
+        <button id="vc-reset" class="secondary" title="Back to the whole yard">Reset view</button>
+      </div>
+      <div id="nav-hint">Drag to rotate · Right-drag or Shift-drag to move · Scroll or pinch to zoom to the pointer · Double-click to centre on a spot · Arrow keys move</div>
+      <div id="editor-pane" hidden></div>
+    </main>
+  </div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

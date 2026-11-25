@@ -1,0 +1,10 @@
+.DS_Store
+
+# Xcode per-user state
+xcuserdata/
+*.xcuserstate
+
+# Secrets and local data
+.env
+server/data/
+.project.pbxproj.before-rename
